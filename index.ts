@@ -17,6 +17,7 @@ const crawlUrl = async (requestUrl: any) => {
     })
   });
 }
+//分開下載excel檔
 const getNestBodyData = async (root: any) => {
   // console.log(root)
 
@@ -45,7 +46,7 @@ const getNestBodyData = async (root: any) => {
 
 
 }
-
+//start:合併為一個excel檔下載
 const getNestBodyDataUrl = async (root: any) => {
   const UrlArray = root.map(async (r: any) => await crawlUrl(r.url));
   const bb = Promise.all(UrlArray).then(a => {
@@ -75,23 +76,17 @@ let nestedPatientQAListData:any[]=[];
   const answer = $(element.find('.ptdet-text').children('p')[0]).text();
   const title=element.find('.ptdet-topic').text();
   nestedPatientQAListData.push({
-    answer: answer,
-    title:title
+    title:title,
+    answer: answer
   })
  })
-    //  for (let index = 0; index < a.length; index++) {
-    //   a[index]['content']
-    //   const element = $(a[index]);
-    //   const answer = $(element.find('.ptdet-text').children('p')[0]).text();
-    //   nestedPatientQAListData.push({
-    //     answer: answer,
-    //   })
-    // }
+    
     console.log(nestedPatientQAListData)
      let xls = json2xls(nestedPatientQAListData);
      fs.writeFileSync(`data.xlsx`, xls, 'binary');
   })
 }
+//end:合併為一個excel檔下載
 (async () => {
   let websiteBody = await crawlUrl(`${rootUrl}/cglist.phtml?Category=421169`)
   const patientQAList = $(websiteBody).find('.shadow-ptname');
@@ -107,6 +102,6 @@ let nestedPatientQAListData:any[]=[];
   //await getNestBodyData(patientQAListData);
   let ss = await getNestBodyDataUrl(patientQAListData)
   //console.log(ss)
-  await getNestBodyDataExcel(await getNestBodyDataUrl(patientQAListData));
+  await getNestBodyDataExcel(ss);
  
 })()
