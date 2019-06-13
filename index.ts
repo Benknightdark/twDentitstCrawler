@@ -83,7 +83,7 @@ let nestedPatientQAListData:any[]=[];
     
     console.log(nestedPatientQAListData)
      let xls = json2xls(nestedPatientQAListData);
-     fs.writeFileSync(`data.xlsx`, xls, 'binary');
+     fs.writeFileSync(`DentistQnA.xlsx`, xls, 'binary');
   })
 }
 //end:合併為一個excel檔下載
