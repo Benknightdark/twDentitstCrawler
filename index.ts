@@ -1,6 +1,6 @@
-import cheerio from 'cheerio';
-import iconvlite from 'iconv-lite';
-import request from 'request';
+import * as cheerio from 'cheerio';
+import * as iconvlite from 'iconv-lite';
+import request = require('request');
 var json2xls = require('json2xls');
 const fs = require('fs');
 
