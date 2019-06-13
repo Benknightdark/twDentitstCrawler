@@ -73,11 +73,18 @@ let nestedPatientQAListData:any[]=[];
  //   const nestDataList = 
  a.map((o:any)=>{
   const element = $(o);
-  const answer = $(element.find('.ptdet-text').children('p')[0]).text();
+  //let aa=element.find('.ptdet-text').find('p').last().text('')
+  let answerArray=element.find('.ptdet-text').text()//.children('p');
+  // let answers=''
+  // for (let index = 0; index <= answerArray.length-1; index++) {
+  //   const element = answerArray[index];
+  //   answers+=$(element).text()+"\n";
+  // }
+ // const answer = $(element.find('.ptdet-text').children('p')[0]).text();
   const title=element.find('.ptdet-topic').text();
   nestedPatientQAListData.push({
-    title:title,
-    answer: answer
+    question:title,
+    answer: answerArray//answers
   })
  })
     
