@@ -18,44 +18,37 @@ const crawlUrl = async (requestUrl: any) => {
   });
 }
 const getNestBodyData = async (root: any) => {
-  console.log(root)
-  let nestedPatientQAListData: any = [];
+  // console.log(root)
 
   return new Promise((resolve, reject) => {
     root.map(async (a: any) => {
+      let nestedPatientQAListData: any[] = [];
+
       const nestWebsiteBody = await crawlUrl(a.url);
       const nestDataList = $(nestWebsiteBody).find('.shadow-link')
       for (let index = 0; index < nestDataList.length; index++) {
         const element = $(nestDataList[index]);
-        console.log(element.text())
-        console.log(rootUrl + "/" + element.attr('href'))
         const answer = $($(await crawlUrl(rootUrl + "/" + element.attr('href'))).find('.ptdet-text').children('p')[0]).text();
-        console.log(`answer : ${answer}`)
         nestedPatientQAListData.push({
           title: element.text(),
           answer: answer,
           url: rootUrl + "/" + element.attr('href')
         })
       }
+      console.log(nestedPatientQAListData)
+      let xls = json2xls(nestedPatientQAListData);
+      fs.writeFileSync(`${a.title}.xlsx`, xls, 'binary');
     })
-    let xls = json2xls(nestedPatientQAListData);
-    fs.writeFileSync('data.xlsx', xls, 'binary');
-    return resolve(nestedPatientQAListData)
+
   });
 
 
 
 }
 (async () => {
-  // 
-  //let bb= await  ;
-  //console.log(bb)
-  console.log(`${rootUrl}/cglist.phtml?Category=421169`)
   let websiteBody = await crawlUrl(`${rootUrl}/cglist.phtml?Category=421169`)
-  console.log(websiteBody)
   const patientQAList = $(websiteBody).find('.shadow-ptname');
   let patientQAListData: any = [];
-  let nestedPatientQAListData: any = [];
   for (let index = 0; index < patientQAList.length; index++) {
     const element = $(patientQAList[index]).find('a');
     patientQAListData.push({
