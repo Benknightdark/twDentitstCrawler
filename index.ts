@@ -1,5 +1,5 @@
-import * as cheerio from 'cheerio';
-import * as iconvlite from 'iconv-lite';
+import * as cheerio from "cheerio"
+import  * as iconvlite from 'iconv-lite';
 import request = require('request');
 var json2xls = require('json2xls');
 const fs = require('fs');
@@ -88,6 +88,7 @@ let nestedPatientQAListData:any[]=[];
 }
 //end:合併為一個excel檔下載
 (async () => {
+  console.log("哏")
   let websiteBody = await crawlUrl(`${rootUrl}/cglist.phtml?Category=421169`)
   const patientQAList = $(websiteBody).find('.shadow-ptname');
   let patientQAListData: any = [];
