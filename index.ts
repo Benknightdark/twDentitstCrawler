@@ -45,6 +45,53 @@ const getNestBodyData = async (root: any) => {
 
 
 }
+
+const getNestBodyDataUrl = async (root: any) => {
+  const UrlArray = root.map(async (r: any) => await crawlUrl(r.url));
+  const bb = Promise.all(UrlArray).then(a => {
+    let newUrl: any[] = [];
+    a.map((b: any) => {
+      const nestDataList = $(b).find('.shadow-link')
+      for (let index = 0; index < nestDataList.length; index++) {
+        const element = $(nestDataList[index]);
+        newUrl.push({
+          title:element.text(),
+          url:rootUrl + "/" + element.attr('href')
+        })
+      }
+    })
+    return newUrl;
+  })
+  return bb;
+}
+const getNestBodyDataExcel = async (root: any) => {
+  const bb1=root.map(async (b1:any)=>await crawlUrl(b1.url));
+  console.log(bb1)
+  const bb = Promise.all(bb1).then(a => {
+let nestedPatientQAListData:any[]=[];
+ //   const nestDataList = 
+ a.map((o:any)=>{
+  const element = $(o);
+  const answer = $(element.find('.ptdet-text').children('p')[0]).text();
+  const title=element.find('.ptdet-topic').text();
+  nestedPatientQAListData.push({
+    answer: answer,
+    title:title
+  })
+ })
+    //  for (let index = 0; index < a.length; index++) {
+    //   a[index]['content']
+    //   const element = $(a[index]);
+    //   const answer = $(element.find('.ptdet-text').children('p')[0]).text();
+    //   nestedPatientQAListData.push({
+    //     answer: answer,
+    //   })
+    // }
+    console.log(nestedPatientQAListData)
+     let xls = json2xls(nestedPatientQAListData);
+     fs.writeFileSync(`data.xlsx`, xls, 'binary');
+  })
+}
 (async () => {
   let websiteBody = await crawlUrl(`${rootUrl}/cglist.phtml?Category=421169`)
   const patientQAList = $(websiteBody).find('.shadow-ptname');
@@ -57,7 +104,9 @@ const getNestBodyData = async (root: any) => {
     })
 
   }
-  await getNestBodyData(patientQAListData);
-
-
+  //await getNestBodyData(patientQAListData);
+  let ss = await getNestBodyDataUrl(patientQAListData)
+  //console.log(ss)
+  await getNestBodyDataExcel(await getNestBodyDataUrl(patientQAListData));
+ 
 })()
