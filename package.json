@@ -1,0 +1,27 @@
+{
+  "name": "twdentitstcrawler",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "build": "tsc  index.ts --rootDir . --outDir build"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.19.0",
+    "cheerio": "^1.0.0-rc.3",
+    "iconv-lite": "^0.4.24",
+    "json2xls": "^0.1.2",
+    "request": "^2.88.0"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/cheerio": "^0.22.11",
+    "@types/iconv-lite": "0.0.1",
+    "@types/request": "^2.48.1",
+    "ts-node": "^8.2.0",
+    "typescript": "^3.5.1"
+  }
+}
