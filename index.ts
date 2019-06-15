@@ -1,5 +1,6 @@
 import * as cheerio from "cheerio"
 import  * as iconvlite from 'iconv-lite';
+import *  as uuid from 'uuid';
 import request = require('request');
 var json2xls = require('json2xls');
 const fs = require('fs');
@@ -74,13 +75,7 @@ let nestedPatientQAListData:any[]=[];
  a.map((o:any)=>{
   const element = $(o);
   //let aa=element.find('.ptdet-text').find('p').last().text('')
-  let answerArray=element.find('.ptdet-text').text()//.children('p');
-  // let answers=''
-  // for (let index = 0; index <= answerArray.length-1; index++) {
-  //   const element = answerArray[index];
-  //   answers+=$(element).text()+"\n";
-  // }
- // const answer = $(element.find('.ptdet-text').children('p')[0]).text();
+  let answerArray=element.find('.ptdet-text').text()
   const title=element.find('.ptdet-topic').text();
   nestedPatientQAListData.push({
     question:title,
