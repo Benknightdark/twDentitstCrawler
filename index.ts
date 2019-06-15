@@ -1,9 +1,13 @@
 import * as cheerio from "cheerio"
-import  * as iconvlite from 'iconv-lite';
+import * as iconvlite from 'iconv-lite';
 import *  as uuid from 'uuid';
-import request = require('request');
-var json2xls = require('json2xls');
-const fs = require('fs');
+import *  as request from 'request';
+// import request = require('request');
+//var json2xls = require('json2xls');
+import *  as json2xls from 'json2xls';
+import *  as fs from 'fs';
+
+// const fs = require('fs');
 
 const rootUrl = `http://tw-dentist.com/front/bin`;
 const $ = cheerio;
@@ -57,8 +61,8 @@ const getNestBodyDataUrl = async (root: any) => {
       for (let index = 0; index < nestDataList.length; index++) {
         const element = $(nestDataList[index]);
         newUrl.push({
-          title:element.text(),
-          url:rootUrl + "/" + element.attr('href')
+          title: element.text(),
+          url: rootUrl + "/" + element.attr('href')
         })
       }
     })
@@ -66,26 +70,46 @@ const getNestBodyDataUrl = async (root: any) => {
   })
   return bb;
 }
-const getNestBodyDataExcel = async (root: any) => {
-  const bb1=root.map(async (b1:any)=>await crawlUrl(b1.url));
-  console.log(bb1)
-  const bb = Promise.all(bb1).then(a => {
-let nestedPatientQAListData:any[]=[];
- //   const nestDataList = 
- a.map((o:any)=>{
-  const element = $(o);
-  //let aa=element.find('.ptdet-text').find('p').last().text('')
-  let answerArray=element.find('.ptdet-text').text()
-  const title=element.find('.ptdet-topic').text();
-  nestedPatientQAListData.push({
-    question:title,
-    answer: answerArray//answers
-  })
- })
-    
+const getNestBodyDataExcel = async (root: any, patientQAListData: any) => {
+  const bb1 = root.map(async (b1: any) => {
+    return {
+      url: b1.url,
+      content: await crawlUrl(b1.url)
+    }
+  });
+  // console.log(bb1)
+  const bb = Promise.all(bb1).then((a: any) => {
+    let nestedPatientQAListData: any[] = [];
+    //   const nestDataList = 
+    a.map((o: any) => {
+      const element = $(o.content);
+      const typeid = element.find('.path').last().text();
+      //let aa=element.find('.ptdet-text').find('p').last().text('')
+      // let answerArray=element.find('.ptdet-text')
+      // .children().filter(':last').parent().text()//.text()
+      let answerArray = element.find('.ptdet-text')
+      if(answerArray.children().length==2){
+        answerArray.children().last().remove();
+
+      }else{
+        answerArray.children().last().prev().remove();
+
+      }
+      let answerdata = answerArray.text();
+      // .children().filter(':last').parent().text()//.text()
+      const title = element.find('.ptdet-topic').text();
+      nestedPatientQAListData.push({
+        question: title,
+        answer: answerdata,//answerArray//answers
+        typeid: patientQAListData.filter(a => a.title === typeid)[0].id,
+        url: o.url,
+        id: uuid()
+      })
+    })
+
     console.log(nestedPatientQAListData)
-     let xls = json2xls(nestedPatientQAListData);
-     fs.writeFileSync(`DentistQnA.xlsx`, xls, 'binary');
+    let xls = json2xls(nestedPatientQAListData);
+    fs.writeFileSync(`DentistQnA.xlsx`, xls, 'binary');
   })
 }
 //end:合併為一個excel檔下載
@@ -98,13 +122,16 @@ let nestedPatientQAListData:any[]=[];
     const element = $(patientQAList[index]).find('a');
     patientQAListData.push({
       title: element.text(),
-      url: rootUrl + "/" + element.attr('href')
+      url: rootUrl + "/" + element.attr('href'),
+      id: uuid()
     })
 
   }
+  let xls = json2xls(patientQAListData);
+  fs.writeFileSync(`DentistQnACategory.xlsx`, xls, 'binary');
   //await getNestBodyData(patientQAListData);
   let ss = await getNestBodyDataUrl(patientQAListData)
   //console.log(ss)
-  await getNestBodyDataExcel(ss);
- 
+  await getNestBodyDataExcel(ss, patientQAListData);
+
 })()

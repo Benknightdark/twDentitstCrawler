@@ -39,8 +39,11 @@ exports.__esModule = true;
 var cheerio = require("cheerio");
 var iconvlite = require("iconv-lite");
 var request = require("request");
-var json2xls = require('json2xls');
-var fs = require('fs');
+// import request = require('request');
+//var json2xls = require('json2xls');
+var json2xls = require("json2xls");
+var fs = require("fs");
+// const fs = require('fs');
 var rootUrl = "http://tw-dentist.com/front/bin";
 var $ = cheerio;
 var crawlUrl = function (requestUrl) { return __awaiter(_this, void 0, void 0, function () {
@@ -145,11 +148,12 @@ var getNestBodyDataExcel = function (root) { return __awaiter(_this, void 0, voi
             //   const nestDataList = 
             a.map(function (o) {
                 var element = $(o);
-                var answer = $(element.find('.ptdet-text').children('p')[0]).text();
+                //let aa=element.find('.ptdet-text').find('p').last().text('')
+                var answerArray = element.find('.ptdet-text').text();
                 var title = element.find('.ptdet-topic').text();
                 nestedPatientQAListData.push({
-                    title: title,
-                    answer: answer
+                    question: title,
+                    answer: answerArray //answers
                 });
             });
             console.log(nestedPatientQAListData);
